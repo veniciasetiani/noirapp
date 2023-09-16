@@ -17,12 +17,19 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function showuserbycategory(category $category)
+    public function showuserbycategory(category $category) // Keep it as provided
     {
+        if (!$category) {
+            abort(404); // or handle the error in another way
+        }
+
+        $users = $category->user()->whereIn('role_id', [2, 3])->where('id', '!=', auth()->user()->id)->get(); // Keep it as provided
+
         return view('users', [
             'title' => "User by category",
             'active' => 'category',
-            'users' => $category->user->load('category', 'role','cart') // Use the correct relationship name 'users'
+            'users' => $users
         ]);
     }
+
 }

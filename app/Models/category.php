@@ -8,18 +8,17 @@ use App\Models\User;
 
 class category extends Model
 {
-
     use HasFactory;
 
     protected $fillable = [
-
         'name',
         'slug',
-        'image'
-
+        'image',
     ];
-    public function user (){
-        return $this->hasMany(User::class);
+
+    public function user()
+    {
+        return $this->hasMany(User::class, 'category_id'); // Assuming a category can have many users
     }
 
     public function getRouteKeyName()

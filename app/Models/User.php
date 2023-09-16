@@ -48,10 +48,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(category::class);
-    }
+    public function categories()
+{
+    return $this->belongsTo(Category::class, 'category_id');
+}
 
     public function role()
     {
@@ -65,5 +65,6 @@ class User extends Authenticatable
     public function permission(){
         return $this->belongsTo(permission::class,'permission_id');
     }
+
 
 }

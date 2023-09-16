@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
             'email' => "vs@gmail.com",
             'excerpt' => "halo semua nama aku venicia",
             "body" => "halo semua nama aku venicia, yuk main bareng guys aku ini anaknya mage banget jadi bisa buat gendong kalian! cus order",
-            'category_id' => 1,
+            'category_id' => 2,
             'role_id' => 1,
             "password" => bcrypt('password')
         ]);
@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
             'excerpt' => "halo semua nama aku reyna",
             "body" => "halo semua nama aku venicia, yuk main bareng guys aku ini anaknya marksman banget jadi bisa buat gendong kalian! cus order",
             'category_id' => 2,
-            'role_id' => 1,
+            'role_id' => 3,
             "password" => bcrypt('password')
         ]);
         User::create([
@@ -85,8 +85,8 @@ class DatabaseSeeder extends Seeder
             'email' => "s@gmail.com",
             'excerpt' => null,
             "body" => null,
-            'category_id' => null,
-            'role_id' => 4,
+            'category_id' => 2,
+            'role_id' => 3,
             "password" => bcrypt('password')
         ]);
         // cart::create([
