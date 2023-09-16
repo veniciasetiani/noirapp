@@ -27,7 +27,7 @@ public function markAsDone($id)
 
     public function history(){
         $transactions = Transaction::where('buyer_id', auth()->user()->id)
-            ->where('status', 'DONE')
+            ->where('status', ['ON_GOING', 'DONE'])
             ->get();
 
         return view('transaction.history', compact('transactions'),['active' => 'historyPage']);
