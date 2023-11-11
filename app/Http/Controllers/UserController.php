@@ -22,7 +22,7 @@ class UserController extends Controller
 
         $availableTimes = AvailableTime::where('user_id', $user->id)->get();
         $availableDays = $availableTimes->pluck('day')->unique()->values()->toArray();
-        $schedules = Schedule::where('buyer_id',auth()->user()->id)->get();
+        // $schedules = Schedule::where('buyer_id',auth()->user()->id)->get();
         // Ambil hari yang tersedia
         // $userSelectedDates = Schedule::where('user_id', $user->id)->pluck('date');
         // $formattedDates = $userSelectedDates->map(function ($date) {
@@ -36,13 +36,13 @@ class UserController extends Controller
         // ->get();
         //  dd($existingTimes);
 
-        return view('singleuser',compact('availableTimes','availableDays','schedules'), [
+        return view('singleuser',compact('availableTimes','availableDays'), [
             'title' => "User Information",
             'active' => 'singleuser',
             'user' => $user->load('category', 'role', 'cart', 'permission'),
             'permissions' => $permissions,
         ]);
-        
+
     }
 
     public function reducePoints(Request $request) {
