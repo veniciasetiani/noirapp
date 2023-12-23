@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('container')
+<div class="my-4 py-4">
     <h2 class="text-center">Transaction History</h2>
     @if(session()->has('success'))
     <div class="alert alert-success" role="alert">
@@ -48,4 +49,5 @@
         </tbody>
     </table>
     @endif
+</div>
 @endsection

@@ -142,10 +142,10 @@
 
                     <!-- Right Column -->
                     <div
-                        class="right-column d-flex flex-column align-items-lg-start align-items-center text-lg-start text-center">
-                        <form id="topUpForm">
+                        class="d-flex flex-column align-items-lg-center align-items-center justify-content-center w-50">
+                        <form id="topUpForm w-75">
                             @csrf
-                            <h2 class="title-text text-white mb-4">Top Up Page</h2>
+                            <h2 class="title-text text-white mb-4">Top Up</h2>
                             <ul style="padding: 0; margin: 0">
                                 <li class="list-unstyled" style="margin-bottom: 2rem">
                                     <p class="text-caption mb-2">
@@ -182,7 +182,9 @@
                                     <input type="hidden" name="status" value="paid">
                                 </li>
                             </ul>
-                            <button type="submit" class="btn btn-primary px-3 text-white">Beli</button>
+                            <div class="d-flex w-100 justify-content-end">
+                                <button type="submit" class="btn btn-primary px-5 text-white">Beli</button>
+                            </div>
                         </form>
                     </div>
                 </div>
