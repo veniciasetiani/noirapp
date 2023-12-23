@@ -22,7 +22,6 @@
 
             </ul>
 
-
             @auth
             <ul class="navbar-nav d-flex flex-column flex-lg-row justify-items-center align-items-start align-items-lg-center px-2">
                 <li class="nav-item d-flex align-items-center mb-2 mb-lg-0 me-lg-2 btn">
