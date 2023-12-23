@@ -460,8 +460,8 @@ body {
     cursor: pointer;
 }
 
-.card {
-    /* background-color: #ee7828; */
+.card-default-color {
+    background-color: #ee7828;
 }
 
 h3 {
@@ -648,7 +648,7 @@ hr {
 
 .text-title-menu{
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   font-size: 2.25rem;
 
 }

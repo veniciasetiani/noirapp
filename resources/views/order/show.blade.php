@@ -1,8 +1,8 @@
 @extends('layouts/main')
 
 @section('container')
-<div class="container">
-    <h2 class="text-white text-center">My Cart</h2>
+<div class="container my-3 py-5">
+    <h2 class="text-white text-center text-title-menu">My Cart</h2>
 
     @if(session()->has('success'))
         <div class="alert alert-success" role="alert">
@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <div class="card">
+    <div class="card bg-transparent my-2 border-0">
         <div class="card-body">
             <table class="table table-white-text">
                 <thead>

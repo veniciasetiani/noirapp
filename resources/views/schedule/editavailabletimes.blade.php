@@ -7,9 +7,9 @@
             {{ session('success') }}
         </div>
     @endif
-        <div class="row justify-content-center">
+        <div class="row justify-content-center my-5">
             <div class="col-md-6">
-                <div class="card">
+                <div class="card card-default-color">
                     <div class="card-body">
                         <h2 class="card-title">Update Available Times</h2>
 

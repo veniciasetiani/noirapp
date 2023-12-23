@@ -2,7 +2,7 @@
 
 @section('container')
 <div class="container mt-5">
-    <h2 class="text-center">Transaction</h2>
+    <h2 class="text-center text-title-menu">Transaction</h2>
 
     @if(session()->has('success'))
         <div class="alert alert-success">
