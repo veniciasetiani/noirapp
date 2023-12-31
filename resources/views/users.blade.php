@@ -51,7 +51,7 @@
         @foreach ($users->skip(1) as $user)
         <div class="col-md-4 mb-3">
             <div class="card user-card overflow-hidden d-flex flex-column justify-content-between"
-                style="min-width: 15rem; height: 45vh;">
+                style="min-width: 15rem; height: 45vh; max-height:30rem;">
                 <div class="position-absolute px-4 py-2 text-white m-2 top-0"
                     style="background-color: rgba(113, 43, 137, 1); right: 0px; border-radius: 5px;"><a
                         class="text-decoration-none text-white"
