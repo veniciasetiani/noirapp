@@ -10,8 +10,8 @@
             <div class="row justify-content-center">
                 <form class="form-horizontal poststars" action="/rating" id="addStar" method="POST">
                     @csrf
-                    <div class="form-group required">
-                        <div class="col-md-9">
+                    <div class="form-group required d-flex flex-row justify-content-center">
+                        <div class="col-auto">
                             <input class="star star-5" value="5" id="star-5" type="radio" name="rating">
                             <label class="star star-5" for="star-5"></label>
                             <input class="star star-4" value="4" id="star-4" type="radio" name="rating" />

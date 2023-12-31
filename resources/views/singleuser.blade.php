@@ -24,7 +24,7 @@
             z-index: 1;
         }
 
-        .carousel-control-prev {
+        /* .carousel-control-prev {
             left: 1em;
             margin-left: 325px;
         }
@@ -33,14 +33,14 @@
             right: 1em;
             margin-right: 350px;
 
-        }
+        } */
 
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
             width: 30px;
             height: 30px;
             background-size: 100%;
-            filter: invert(1);
+            filter:invert(1);
         }
 
         .carousel-item img,
@@ -51,7 +51,7 @@
         }
     </style>
 
-    <div class="container">
+    <div class="container mt-4">
         <div class="row justify-content-center mb-5">
             <div class="col-md-4 d-inline-block justify-content-right">
                 <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
@@ -119,9 +119,10 @@
                 <h2 class="mb-3 mt-2">{{ $user->username }}</h2>
                 <div class="col-md-4 d-inline">
                     <a href="/addtocart/{{ $user->username }}" class="btn btn-lg">Order</a>
+                    <a href="/report/{{ $user->username }}" class="btn btn-lg">Report</a>
+
                     <button type="submit" class="btn-chat" data-chat-with="{{ $user->id }}"
                         onclick="window.location.href='/chatify/{{ $user->id }}'"><i class="bi bi-chat-heart"></i> Chat</button>
-                        <a href="/report/{{ $user->username }}" class="btn btn-lg">Report</a>
                 </div>
             </div>
 
