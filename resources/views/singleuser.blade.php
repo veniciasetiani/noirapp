@@ -214,9 +214,11 @@
                 Rating</p>
                 <hr>
                 <div>
+
                     @php
-                        $fullStars = floor($averageRating); // Bintang penuh
-                        $emptyStars = 5 - $fullStars; // Bintang kosong (total bintang - bintang penuh)
+                        $roundedRating = floor($averageRating * 2) / 2; // Bulatkan ke setengah bintang terdekat ke bawah
+                        $fullStars = floor($roundedRating); // Bintang penuh
+                        $hasHalfStar = $roundedRating - $fullStars === 0.5; // Cek apakah terdapat setengah bintang
                         $username = $user->username;
                     @endphp
 
@@ -224,7 +226,11 @@
                         <a href="/rating-detail/{{ $username }}"><i class="bi bi-star-fill filled-star" style="color: yellow;"></i></a>
                     @endfor
 
-                    @for ($i = 0; $i < $emptyStars; $i++)
+                    @if ($hasHalfStar)
+                        <i class="bi bi-star-half filled-star" style="color: yellow;"></i>
+                    @endif
+
+                    @for ($i = 0; $i < 5 - ceil($roundedRating); $i++)
                         <a href="/rating-detail/{{ $username }}"><i class="bi bi-star empty-star"></i></a>
                     @endfor
                 </div>
