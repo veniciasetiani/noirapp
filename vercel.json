@@ -34,7 +34,6 @@
         "MYSQL_ATTR_SSL_CA": "/etc/pki/tls/certs/ca-bundle.crt",
  
         "LOG_CHANNEL": "stack",
-        "LOG_DEPRECATIONS_CHANNEL": null,
         "LOG_LEVEL": "debug",
 
         "DB_CONNECTION": "mysql",
