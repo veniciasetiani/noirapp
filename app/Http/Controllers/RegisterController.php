@@ -12,7 +12,7 @@ class RegisterController extends Controller
             "title" => "register",
             'active' => 'register'
             // Post::find($id)
-    
+
         ]);
     }
 
@@ -23,7 +23,7 @@ class RegisterController extends Controller
             'email' => 'required|email:dns|unique:users',
             'password' => 'required|min:5',
             'name' =>'required|max:255',
-            'idcardnumber' =>'required|max:16|min:16|unique:users'
+            'idcardnumber' =>'required|numeric|max:16|min:16|unique:users'
         ]);
 
         $validated["password"] = bcrypt($validated['password']);

@@ -4,11 +4,10 @@
 @section('container')
 <div class="container col-md-4 mt-5">
     <div class="card">
-
         <div class="card-body text-center">
             <h4 class="text-black">Review</h4>
             <div class="row justify-content-center">
-                <form class="form-horizontal poststars" action="/rating" id="addStar" method="POST">
+                <form class="form-horizontal poststars" action="/rating" id="addStar" method="POST" onsubmit="return validateForm()">
                     @csrf
                     <div class="form-group required">
                         <div class="col-md-9">
@@ -25,7 +24,7 @@
                         </div>
                     </div>
                     <div class="form-group col-md-12">
-                        <textarea class="form-control" name="comment" cols="45" rows="5"></textarea>
+                        <textarea class="form-control" name="comment" id="comment" cols="45" rows="5"></textarea>
                     </div>
                     <div class="col-md-12 text-center mt-2">
                         <input type="hidden" name="slug" value="{{  $slug }}">
@@ -37,8 +36,31 @@
     </div>
 </div>
 <script>
-    // $('#addStar').change('.star', function(e) {
-    //     $(this).submit();
-    // });
+    function validateForm() {
+        var rating = document.getElementsByName("rating");
+        var comment = document.getElementById("comment").value;
+
+        // Check if rating is selected
+        var ratingSelected = false;
+        for (var i = 0; i < rating.length; i++) {
+            if (rating[i].checked) {
+                ratingSelected = true;
+                break;
+            }
+        }
+
+        // Check if comment is empty
+        if (!ratingSelected && comment.trim() === "") {
+            alert("Please select a rating and enter a comment.");
+            return false;
+        } else if (!ratingSelected) {
+            alert("Please select a rating.");
+            return false;
+        } else if (comment.trim() === "") {
+            alert("Please enter a comment.");
+            return false;
+        }
+        return true;
+    }
 </script>
 @endsection
