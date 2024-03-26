@@ -27,10 +27,8 @@ class UserController extends Controller
 
         $availableTimes = AvailableTime::where('user_id', $user->id)->get();
         $availableDays = $availableTimes->pluck('day')->unique()->values()->toArray();
-        // $schedules = Schedule::where('buyer_id',auth()->user()->id)->get();
-        $ratings = rating::where('seller_id', $user->id)->get();
+        $ratings = Rating::where('seller_id', $user->id)->get();
 
-        // Hitung total rating yang ada
         $totalRating = 0;
         $totalUsers = count($ratings);
 
@@ -38,7 +36,6 @@ class UserController extends Controller
             $totalRating += $rating->rating;
         }
 
-        // Hitung rata-rata rating
         $averageRating = $totalUsers > 0 ? $totalRating / $totalUsers : 0;
 
         DB::table('users')
@@ -46,12 +43,11 @@ class UserController extends Controller
         ->update(['rating_avg' => $averageRating]);
 
 
-        if(auth()->user() == null){
+        if (auth()->user() == null) {
             return redirect('/login');
         }
-        else{
 
-        }
+
         // Ambil hari yang tersedia
         // $userSelectedDates = Schedule::where('user_id', $user->id)->pluck('date');
         // $formattedDates = $userSelectedDates->map(function ($date) {
@@ -76,8 +72,8 @@ class UserController extends Controller
             'ratings'=> Rating::where('seller_id',$user->id)->paginate(3),
             'active' => 'report_detail'
         ]);
-
     }
+
 
     public function reducePoints(Request $request) {
         $user_id = Auth::user()->id;

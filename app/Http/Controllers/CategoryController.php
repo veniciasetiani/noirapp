@@ -17,23 +17,31 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function showuserbycategory(category $category) // Keep it as provided
+    public function showuserbycategory(Category $category)
     {
         if (!$category) {
             abort(404); // or handle the error in another way
         }
 
-        if(auth()->user()){
+        if (auth()->user()) {
             $users = $category->user()
-            ->with('permissions') // Eager load the permissions relationship
-            ->whereIn('role_id', [1, 2])
-            ->where('id', '!=', auth()->user()->id)
-            ->get();
-            // dd($users->pluck('permissions'));
-            }
-        else{
+                ->with(['permissions' => function ($query) {
+                    $query->where('statcode', 'APV')->latest('created_at');
+                }])
+                ->whereIn('role_id', [1, 2])
+                ->where('id', '!=', auth()->user()->id)
+                ->get();
+        } else {
             $users = $category->user()->whereIn('role_id', [1, 2])->get();
         }
+
+        // You can remove the dd() here if you want to proceed to rendering the view
+        // dd([
+        //     'title' => "User by category",
+        //     'active' => 'category',
+        //     'users' => $users,
+        // ]);
+
         return view('users', [
             'title' => "User by category",
             'active' => 'category',
@@ -41,6 +49,9 @@ class CategoryController extends Controller
             'category' => $category,
         ]);
     }
+
+
+
 
 
     public function filterByRole(Request $request, category $category)
