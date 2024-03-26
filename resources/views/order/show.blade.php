@@ -42,7 +42,7 @@
                             <td class="text-center">
                                 @if ($cartItem->schedule)
                                     Date: {{ $cartItem->schedule->date }},
-                                    Time: {{ $cartItem->schedule->start_time }} - {{ $cartItem->schedule->end_time }}
+                                    Time: {{ $cartItem->schedule->start_time }} - {{ $cartItem->schedule->end_time }} WIB
                                 @endif
                             </td>
                             <td class="text-center">
@@ -353,7 +353,7 @@ function updateCart() {
 </script>
 
 <style>
-   
+
     /* Style for the quantity input */
     .quantity-input {
         width: 50px !important; /* Adjust this as needed */

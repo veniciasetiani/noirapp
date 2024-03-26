@@ -28,7 +28,7 @@
                             <td>
                                 @if ($orderValidation->schedule)
                                     Date: {{ $orderValidation->schedule->date }},
-                                    Time: {{ $orderValidation->schedule->start_time }} - {{ $orderValidation->schedule->end_time }}
+                                    Time: {{ $orderValidation->schedule->start_time }} - {{ $orderValidation->schedule->end_time }} WIB
                                 @endif
                             </td>
                             <td>{{ $orderValidation->status }}</td>

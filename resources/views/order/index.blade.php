@@ -81,7 +81,7 @@
                             @endphp
                             @for ($i = $startTime; $i < $endTime; $i +=7200) @php $timeStart=date("H:i", $i);
                                 $timeEnd=date("H:i", $i + 7200); @endphp <option value="{{ $timeStart }}">{{ $timeStart
-                                }} - {{ $timeEnd }}</option>
+                                }} - {{ $timeEnd }} WIB</option>
                                 @endfor
                                 @endforeach
                         </select>
@@ -143,7 +143,7 @@ function updateScheduleDisplay() {
 
     // Update the table cell with the selected schedule
     const scheduleCell = document.querySelector('td[data-th="Schedule"]');
-    scheduleCell.textContent = `${schedule.date} - ${schedule.time}`;
+    scheduleCell.textContent = `${schedule.date} - ${schedule.time} WIB`;
 }
 
 // Event listener for the "Continue Shopping" button

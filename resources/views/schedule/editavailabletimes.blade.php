@@ -44,7 +44,7 @@
                                                 @for ($hour = 0; $hour <= 23; $hour++)
                                                     @for ($minute = 0; $minute <= 59; $minute += 15)
                                                         @php
-                                                            $timeValue = sprintf('%02d:%02d:00', $hour, $minute);
+                                                            $timeValue = sprintf('%02d:%02d:00 WIB', $hour, $minute);
                                                         @endphp
                                                         <option value="{{ $timeValue }}" {{ in_array($timeValue, $userAvailableTimes->pluck('start_time')->toArray()) ? 'selected' : '' }}>
                                                             {{ $timeValue }}
@@ -56,7 +56,7 @@
                                                 @for ($hour = 0; $hour <= 23; $hour++)
                                                     @for ($minute = 0; $minute <= 59; $minute += 15)
                                                         @php
-                                                            $timeValue = sprintf('%02d:%02d:00', $hour, $minute);
+                                                            $timeValue = sprintf('%02d:%02d:00 WIB', $hour, $minute);
                                                         @endphp
                                                         <option value="{{ $timeValue }}" {{ in_array($timeValue, $userAvailableTimes->pluck('end_time')->toArray()) ? 'selected' : '' }}>
                                                             {{ $timeValue }}

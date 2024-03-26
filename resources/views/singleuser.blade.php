@@ -120,29 +120,29 @@
                     <h2 class="m-0">{{ $user->username }}</h2>
 
                     <div>
-    
+
                         @php
                             $roundedRating = floor($averageRating * 2) / 2; // Bulatkan ke setengah bintang terdekat ke bawah
                             $fullStars = floor($roundedRating); // Bintang penuh
                             $hasHalfStar = $roundedRating - $fullStars === 0.5; // Cek apakah terdapat setengah bintang
                             $username = $user->username;
                         @endphp
-        
+
                         @for ($i = 0; $i < $fullStars; $i++)
                             <span><i class="bi bi-star-fill filled-star"
                                     style="color: yellow; font-size: 1.2rem;"></i></span>
                         @endfor
-        
+
                         @if ($hasHalfStar)
                             <i class="bi bi-star-half filled-star" style="color: yellow; font-size: 1.2rem;"></i>
                         @endif
-        
+
                         @for ($i = 0; $i < 5 - ceil($roundedRating); $i++)
                             <span><i class="bi bi-star empty-star" style=" font-size: 1.2rem;"></i></span>
                         @endfor
                     </div>
                 </div>
-                 
+
                 <div class="row">
                     <div class="col-12 col-md-6 pe-md-1 mb-2 mb-md-0">
                         <div class="card p-3 bg-transparent border-0 py-2 mb-2">
@@ -216,7 +216,7 @@
                                         @endphp
 
                                         <li>
-                                            {{ date('H:i', $startTime) }} - {{ date('H:i', $endTime) }}
+                                            {{ date('H:i', $startTime) }} - {{ date('H:i', $endTime) }} WIB
                                             ({{ date('l', strtotime($day)) }})
                                         </li>
                                     @endforeach
@@ -230,15 +230,15 @@
                             <div class="row gx-2 align-items-center justify-content-center">
                                 <a href="/addtocart/{{ $user->username }}" class="btn col m-2">Order</a>
                                 <a href="/report/{{ $user->username }}" class="btn col m-2">Report</a>
-                                
+
                                 <p class="col-auto text-center align-center text-white mb-0">or</p>
-    
+
                                 <button type="submit" class="btn-chat p-2 py-1 col  m-2" data-chat-with="{{ $user->id }}"
                                     onclick="window.location.href='/chatify/{{ $user->id }}'">
                                     <i class="bi bi-chat-heart"></i> Chat
                                 </button>
                             </div>
-      
+
                         </div>
                     </div>
                 </div>
