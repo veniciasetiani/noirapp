@@ -63,39 +63,100 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $user_id = $request->user_id;
-        $buyer_id = auth()->user()->id;
-        // $schedule_id = $request->input('schedule_id');
-        // Check if the product already exists in the cart for the current user
-        $schedule = Schedule::where('buyer_id', $buyer_id)->first();
-        $existingCartItem = Cart::where('user_id', $user_id)
-            ->where('buyer_id', $buyer_id)
-            ->first();
+{
+    $user_id = $request->user_id;
+    $buyer_id = auth()->user()->id;
 
-        if ($existingCartItem) {
-            // If the product exists in the cart, return a message
-            return redirect('/game')->with('error', 'Item already in Cart!');
-        } else if ($schedule) {
-            // Jika jadwal ditemukan, buat entitas baru di dalam Cart
-            $expiryTime = now()->addMinutes(2)->toDateTimeString();
+    // Check if the product already exists in the cart for the current user
+    $existingCartItem = Cart::where('user_id', $user_id)
+        ->where('buyer_id', $buyer_id)
+        ->first();
 
-            $newCartItem = Cart::create([
-                'user_id' => $user_id,
-                'price' => $request->price,
-                'buyer_id' => $buyer_id,
-                'schedule_id' => $schedule->id,
-                'timer_expiry' => $expiryTime,
-            ]);
-
-            // ReduceTimerJob::dispatch($newCartItem->id)->delay(now()->addSeconds(1));
-            return redirect('/game')->with('success', 'Added to Cart! Continue Shopping.');
-        } else {
-            // Jika jadwal tidak ditemukan, tampilkan pesan atau lakukan penanganan lain sesuai kebutuhan aplikasi Anda
-            return redirect()->back()->with('error', 'Schedule not found!');
-        }
+    if ($existingCartItem) {
+        // If the product exists in the cart, return a message
+        return redirect('/game')->with('error', 'Item already in Cart!');
     }
 
+    // Retrieve the schedule_id from the request
+    $schedule_id = $request->input('schedule_id');
+
+    // Assuming you have a valid schedule_id, proceed to create a new cart item
+    if ($schedule_id) {
+        $expiryTime = now()->addMinutes(5)->toDateTimeString();
+
+        $newCartItem = Cart::create([
+            'user_id' => $user_id,
+            'price' => $request->price,
+            'buyer_id' => $buyer_id,
+            'schedule_id' => $schedule_id,
+            'timer_expiry' => $expiryTime,
+        ]);
+
+        // Redirect or perform additional actions as needed
+        return redirect('/game')->with('success', 'Added to Cart! Continue Shopping.');
+    } else {
+        // Handle the case where schedule_id is not provided
+        return redirect()->back()->with('error', 'Schedule ID is required to add to cart.');
+    }
+}
+
+public function saveScheduleAndCart(Request $request)
+{
+    $validated = $request->validate([
+        'user_id' => 'required',
+        'schedule' => 'required|array',
+        'schedule.date' => 'required|date',
+        'schedule.time' => 'required'
+    ]);
+
+    $user_id = $validated['user_id'];
+    $buyer_id = auth()->user()->id;
+    $date = $validated['schedule']['date'];
+    $time = $validated['schedule']['time'];
+    $existingSchedule = Schedule::where('user_id',$user_id)->where('date', $date)
+    ->where('start_time', $time)
+    ->where('is_active', true)
+    ->exists();
+
+    $existingSchedule2 = Schedule::where('buyer_id',$buyer_id)->where('date', $date)
+    ->where('start_time', $time)
+    ->where('is_active', true)
+    ->exists();
+    if ($existingSchedule2) {
+        return redirect()->back()->with('error', 'You already have a schedule with this date and time.');
+    }
+    if ($existingSchedule) {
+        return redirect()->back()->with('error', 'The selected date and time are not available.');
+    }
+    try {
+        // Save Schedule
+        $schedule = new Schedule([
+            'user_id' => $user_id,
+            'buyer_id' => $buyer_id,
+            'date' => $date,
+            'start_time' => $time,
+            'end_time' => date('H:i', strtotime($time) + 7200),
+        ]);
+
+        $schedule->save();
+
+        // Save Cart
+        $expiryTime = now()->addMinutes(5)->toDateTimeString();
+        $newCartItem = Cart::create([
+            'user_id' => $user_id,
+            'price' => $request->price,
+            'buyer_id' => $buyer_id,
+            'schedule_id' => $schedule->id,
+            'timer_expiry' => $expiryTime,
+        ]);
+
+        return response()->json(['ok' => true]);
+
+    } catch (\Exception $e) {
+        Log::error('Error saving schedule and cart: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Failed to save schedule and cart. Please try again.');
+    }
+}
 
 
     public function update(Request $request, $id)
@@ -189,14 +250,14 @@ class OrderController extends Controller
 
     // Retrieve the associated schedule
     $schedule = $cartItem->schedule;
+    $schedule->is_active = false;
+    $schedule->save();
 
     // Delete the cart item
     $cartItem->delete();
 
     // Check if the schedule exists and delete it
-    if ($schedule) {
-        $schedule->delete();
-    }
+
         return redirect()->back()->with('success','Item Deleted!');
     }
     public function showOrderPage(Request $request)
@@ -261,12 +322,15 @@ class OrderController extends Controller
 
             // Tambahkan pesanan ke database
             foreach ($cartItems as $cartItem) {
+                $expiryTime = now()->addMinutes(720)->toDateTimeString();
+
                 $orderValidation = new OrderValidation;
                 $orderValidation->buyer_id = $user->id;
                 $orderValidation->seller_id = $cartItem->user_id;
                 $orderValidation->schedule_id = $cartItem->schedule_id; // Save the selected schedule ID
                 $orderValidation->price = $cartItem->price;
                 $orderValidation->status = 'REQ';
+                $orderValidation->timer_expiry = $expiryTime;
                 $orderValidation->save();
             }
 
@@ -443,6 +507,14 @@ public function rejectOrder($id)
 
     $orderValidation = OrderValidation::findOrFail($id);
     $user = User::find($orderValidation->buyer_id);
+
+
+    // Retrieve the associated schedule
+    $schedule = $orderValidation->schedule;
+
+
+    $schedule->is_active = false;
+    $schedule->save();
 
     if (!$user) {
         return redirect()->route('order.request')->with('error', 'User not found.');

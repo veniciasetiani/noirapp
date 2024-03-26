@@ -9,7 +9,7 @@ class Schedule extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','buyer_id','date', 'start_time','end_time'];
+    protected $fillable = ['user_id','buyer_id','date', 'is_active' ,'start_time','end_time'];
 
     // Relasi dengan user
     public function buyer(){
@@ -18,5 +18,10 @@ class Schedule extends Model
 
     public function seller(){
         return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function orderValidations()
+    {
+        return $this->hasMany(OrderValidation::class, 'schedule_id');
     }
 }

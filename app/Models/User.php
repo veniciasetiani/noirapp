@@ -3,13 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\cart;
+use App\Models\category;
+use App\Models\EditDisplayed;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use App\Models\category;
-use App\Models\cart;
-use App\Models\EditDisplayed;
 
 class User extends Authenticatable
 {
@@ -71,7 +72,7 @@ class User extends Authenticatable
     }
 
     public function permissions(){
-    return $this->hasMany(permission::class, 'user_id');
+    return $this->hasMany(permission::class, 'user_id', 'id');
     }
 
     public function permission(){
@@ -81,8 +82,12 @@ class User extends Authenticatable
     public function schedules()
     {
         return $this->hasMany(Schedule::class);
-    }    
-    
+    }
+    public function availableTimes(): HasMany
+    {
+        return $this->hasMany(AvailableTime::class);
+    }
+
     // public function updateSingleBlade()
     // {
     //     return $this->hasOne(EditDisplayed::class, 'user_id');

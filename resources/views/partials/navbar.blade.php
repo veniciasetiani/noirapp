@@ -26,6 +26,17 @@
                 @auth
                 <ul
                     class="navbar-nav d-flex flex-column flex-lg-row justify-items-center align-items-start align-items-lg-center ps-2 h-100">
+
+                    <li class="nav-item d-flex align-items-center mb-2 mb-lg-0 me-lg-2 btn">
+                        <a class="nb-label position-relative" href="/chatify">
+                            <i class="bi bi-chat-fill" style="color: white"></i>
+                            <span id="chatNotificationBadge" class="badge bg-primary rounded-pill position-absolute top-0 start-100 translate-middle ms-1">
+                                0
+                            </span>
+                        </a>
+                    </li>
+
+
                     <li class="nav-item d-flex align-items-center mb-2 mb-lg-0 me-lg-2 btn">
                         <a href="/cart/{{ auth()->user()->username }}">
                             <i class="bi bi-cart-fill" style="color: white"></i>
@@ -170,4 +181,23 @@
 
             </div>
         </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+           function updateNotificationCount(count) {
+                var notificationBadge = document.getElementById('chatNotificationBadge');
+
+                notificationBadge.innerText = count;
+            }
+
+            function fetchAndSetUnreadCount() {
+                $.get('/getUnreadMessagesCount', function(data) {
+                    updateNotificationCount(data.unreadCount);
+
+                    setTimeout(fetchAndSetUnreadCount, 0);
+                });
+            }
+
+            fetchAndSetUnreadCount();
+        </script>
 </nav>

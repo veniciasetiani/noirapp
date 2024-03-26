@@ -16,7 +16,9 @@ class Report extends Model
         'buyer_id',
         'header',
         'detail',
-        'image'
+        'image',
+        'is_refund',
+        'is_reject'
 
 
     ];

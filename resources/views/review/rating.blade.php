@@ -5,8 +5,8 @@
 <div class="container col-md-4 mt-5">
     <div class="card">
 
-        <div class="card-body text-white text-center">
-            <h4>Review</h4>
+        <div class="card-body text-center">
+            <h4 class="text-black">Review</h4>
             <div class="row justify-content-center">
                 <form class="form-horizontal poststars" action="/rating" id="addStar" method="POST">
                     @csrf
@@ -23,10 +23,9 @@
                             <input class="star star-1" value="1" id="star-1" type="radio" name="rating" />
                             <label class="star star-1" for="star-1"></label>
                         </div>
-                        
                     </div>
-                    <div class="col-md-12">
-                        <textarea name="comment" cols="45" rows="5"></textarea>
+                    <div class="form-group col-md-12">
+                        <textarea class="form-control" name="comment" cols="45" rows="5"></textarea>
                     </div>
                     <div class="col-md-12 text-center mt-2">
                         <input type="hidden" name="slug" value="{{  $slug }}">
@@ -38,8 +37,8 @@
     </div>
 </div>
 <script>
-    $('#addStar').change('.star', function(e) {
-        $(this).submit();
-    });
+    // $('#addStar').change('.star', function(e) {
+    //     $(this).submit();
+    // });
 </script>
 @endsection

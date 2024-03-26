@@ -73,6 +73,9 @@ Route::post('/logout',[LogoutController::class,'logout'])->middleware('auth');
 
 Route::get('/addtocart/{user:username}', [OrderController::class,'index'])->middleware('exceptAdmin')->middleware('auth');
 Route::resource('/addtocart', OrderController::class)->middleware('exceptAdmin')->middleware('auth');
+// Route::post('/addtocart', [OrderController::class,'store'])->middleware('exceptAdmin')->middleware('auth');
+Route::post('/save-schedule-and-cart', [OrderController::class,'saveScheduleAndCart'])->middleware('exceptAdmin')->middleware('auth');
+
 
 
 Route::get('/cart/{user:username}', [OrderController::class,'GetCartByUserId'])->middleware('exceptAdmin');
@@ -103,26 +106,28 @@ Route::resource('/dashboard/idcard', AdminIdCardController::class)->middleware('
 
 // Route::get('/chatify', [ChatifyController::class,'showChatify']);
 Route::get('/top_up', [TopUpController::class, 'index'])->middleware('exceptAdmin')->name('top_up')->middleware('auth');
+Route::get('/top_up_fail', [TopUpController::class, 'indexFail'])->middleware('exceptAdmin')->name('top_up_fail')->middleware('auth');
 Route::post('/top_up', [TopUpController::class, 'store'])->middleware('exceptAdmin')->name('store_top_up')->middleware('auth');
 Route::post('/top_up', [TopUpController::class, 'store'])->middleware('exceptAdmin')->name('store_top_up')->middleware('auth');
 Route::get('/top_up/sukses', [TopUpController::class, 'success'])->name('topup.sukses')->middleware('exceptAdmin')->middleware('auth');
 Route::post('/idcardnumber/request', [TopUpController::class, 'idnumcardreq'])->name('idnumreq')->middleware('exceptAdmin')->middleware('auth');
 
-Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-Route::get('/usertransaction', [TransactionController::class, 'foruser'])->name('transactions.foruser');
+Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index')->middleware('auth')->middleware('exceptAdmin');
+Route::get('/usertransaction', [TransactionController::class, 'foruser'])->name('transactions.foruser')->middleware('auth')->middleware('exceptAdmin');
 Route::put('/transactions/{id}/mark-as-done', [TransactionController::class, 'markAsDone'])->name('transactions.markAsDone');
 Route::get('/history', [TransactionController::class, 'history'])->name('transactions.history')->middleware('auth')->middleware('exceptAdmin');
 Route::get('/getcart', [OrderController::class, 'getCartData']);
 Route::resource('/rating', RatingController::class);
-Route::get('/rating', [RatingController::class, 'index']);
+Route::get('/rating', [RatingController::class, 'index'])->middleware('auth')->middleware('exceptAdmin');
 
 
 Route::post('/schedule', [ScheduleController::class,'store']);
+Route::post('/save-schedule', [ScheduleController::class,'saveSchedules']);
 
 
 
-Route::get('/userschedule', [ScheduleController::class,'userSchedules'])->name('user.schedules');
-Route::get('/sellerschedule', [ScheduleController::class,'sellerSchedules'])->name('user.schedules');
+Route::get('/userschedule', [ScheduleController::class,'userSchedules'])->name('user.schedules')->middleware('auth')->middleware('exceptAdmin');
+Route::get('/sellerschedule', [ScheduleController::class,'sellerSchedules'])->name('user.schedules')->middleware('auth')->middleware('exceptAdmin');
 
 Route::resource('/withdrawal', WithdrawalController::class)->middleware('auth')->middleware('exceptAdmin');
 
@@ -134,24 +139,29 @@ Route::resource('/withdrawal', WithdrawalController::class)->middleware('auth')-
 
 
 Route::put('/updateavailabletimes', [ScheduleController::class, 'updateSchedule']);
-Route::get('/editavailabletimes', [ScheduleController::class, 'showEditSchedule'])->name('schedule.viewedit');
+Route::get('/editavailabletimes', [ScheduleController::class, 'showEditSchedule'])->name('schedule.viewedit')->middleware('auth')->middleware('exceptAdmin');
 
 
 
-Route::get('/admin/pending-updates', [AdminUpdateSingleUser::class, 'showPendingUpdates'])->name('admin.pending-updates');
-Route::put('/admin/approve-update/{id}', [AdminUpdateSingleUser::class, 'approveUpdate'])->name('admin.approve-update');
+Route::get('/admin/pending-updates', [AdminUpdateSingleUser::class, 'showPendingUpdates'])->name('admin.pending-updates')->middleware('isAdmin');
+Route::put('/admin/approve-update/{id}', [AdminUpdateSingleUser::class, 'approveUpdate'])->name('admin.approve-update')->middleware('isAdmin');
 
-Route::post('/update-time-left/{itemId}', [OrderController::class, 'updateTimeLeft']);
+Route::post('/update-time-left/{itemId}', [OrderController::class, 'updateTimeLeft'])->middleware('auth');
 
 Route::get('/report/{user:username}', [ReportController::class,'index'])->middleware('exceptAdmin')->middleware('auth');
 
 Route::post('/createreport', [ReportController::class, 'store']);
 
-Route::get('/report-users', [AdminReportController::class, 'index']);
-Route::get('/report-detail/{user:username}', [AdminReportController::class, 'index_detail']);
+Route::get('/report-users', [AdminReportController::class, 'index'])->middleware('isAdmin');
+Route::get('/report-detail/{user:username}', [AdminReportController::class, 'index_detail'])->middleware('isAdmin');
 
 
 Route::post('/report/{id}/ban', [ReportController::class, 'ban'])->name('report.ban');
 Route::post('/report/{id}/unban', [ReportController::class, 'unban'])->name('report.unban');
 
 Route::get('/rating-detail/{user:username}', [RatingController::class, 'show'])->name('rating.detail');
+
+Route::get('/getUnreadMessagesCount', [ChatifyController::class, 'updateUnreadMessagesCount'])->middleware('auth');
+Route::post('/accept/report/{report}', [AdminReportController::class, 'acceptReport'])->name('accept.report');
+Route::post('/reject/report/{report}', [AdminReportController::class, 'rejectReport'])->name('reject.report');
+Route::get('/categories/{category:slug}/filterByRole', [CategoryController::class, 'filterByRole'])->name('filterByRole');

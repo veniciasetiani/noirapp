@@ -7,6 +7,8 @@ use App\Models\permission;
 use Illuminate\Http\Request;
 use App\Models\AvailableTime;
 use Illuminate\Support\Facades\Storage;
+use \Illuminate\Support\Str;
+
 
 class AdminRoleController extends Controller
 {
@@ -48,6 +50,8 @@ class AdminRoleController extends Controller
         $validated['price'] = $data->price;
         $validated['norekening'] = $data->norekening;
         $validated['body'] = $data->body;
+        $validated['excerpt'] = str::limit($data->body, 100);
+
         $validatedpermission['statcode'] = "APV";
 
 

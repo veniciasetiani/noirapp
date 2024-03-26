@@ -3,13 +3,13 @@
 
 @section('container')
 
-<form id="scheduleForm" action="/addtocart" method="post" class="mx-5 mt-4">
+<form id="scheduleForm" action="/save-schedule-and-cart" method="POST" class="mx-5 mt-4">
     @csrf
     <h1 class="h2-title-text mb-4">ADD TO CART</h1>
     <hr>
 
     <input type="hidden" name="user_id" value="{{ $user->id }}">
-    <input type="hidden" name="schedule_id" id="schedule_id" value=""> <!-- Tambahkan input untuk schedule_id -->
+    {{-- <input type="hidden" name="schedule_id" value="{{ session('schedule_id') }}"> --}}
     <input type="hidden" name="temp_schedule" id="temp_schedule" value="">
     <!-- Input tersembunyi untuk menyimpan jadwal sementara -->
     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#scheduleModal">
@@ -95,127 +95,107 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
-
-    function saveTempSchedule(event) {
-        event.preventDefault(); // Prevent default form submission
-
-        // Retrieve selected schedule data
-        const selectedScheduleId = document.getElementById('schedule_id').value;
-        const selectedDate = document.getElementById('date').value;
-        const selectedTime = document.getElementById('timeSlot').value;
-        const wib = "WIB";
-
-        // Create an object to store temporary schedule data
-        const tempSchedule = {
-            schedule_id: selectedScheduleId,
-            date: selectedDate,
-            time: selectedTime,
-            wib:wib
-        };
-
-        // Store temporary schedule data in localStorage
-        localStorage.setItem('tempSchedule', JSON.stringify(tempSchedule));
-
-        // Display the selected schedule below the product and price
-        const scheduleCell = document.querySelector('td[data-th="Schedule"]');
-        scheduleCell.innerHTML = `Date : ${selectedDate}, Time : ${selectedTime} ${wib}`;
-        document.getElementById('schedule_id').value = selectedScheduleId;
-
-        // Close the modal
-        const scheduleModal = document.getElementById('scheduleModal');
-        const modal = bootstrap.Modal.getInstance(scheduleModal); // Get the Bootstrap modal instance
-        modal.hide(); // Close the modal
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const saveChangesBtn = document.querySelector('#scheduleModal button[data-bs-target="#scheduleModal"]');
-        saveChangesBtn.addEventListener('click', saveTempSchedule);
-
-
-    });
-    let shouldPreventSubmit = true;
-    function saveScheduleToDatabase() {
-        const tempSchedule = localStorage.getItem('tempSchedule');
-        if (tempSchedule) {
-            const scheduleData = JSON.parse(tempSchedule);
-            const currentDate = new Date(); // Mendapatkan tanggal saat ini
-            const dateInput = document.getElementById('date');
-            const selectedDate = new Date(dateInput.value);
-            if (selectedDate <= currentDate) {
-                shouldPreventSubmit = false;
-                alert('Please choose day after today!');
-                return;
-            }
-            if (!dateInput.value) {
-                shouldPreventSubmit = false;
-                event.preventDefault();
-                alert('Silakan pilih tanggal.');
-                return; // Berhenti jika tanggal kosong
-            }
-            // Mendapatkan hari-hari yang tersedia dari variabel PHP
-            const availableDays = [
-                @foreach($availableTimes as $availableTime)
+    function validateSelectedDate(date) {
+    const selectedDate = new Date(date);
+    const today = new Date();
+    const availableDays = [
+                        @foreach($availableTimes as $availableTime)
                             '{{ date("D", strtotime($availableTime->day)) }}',
-                @endforeach
-            ];
-
-            // Mendapatkan hari yang dipilih oleh pengguna
-            const selectedDay = selectedDate.toLocaleDateString('en-US', { weekday: 'short' });
-
-            // Memeriksa apakah hari yang dipilih tersedia
-            if (!availableDays.includes(selectedDay)) {
-                shouldPreventSubmit = false;
-                event.preventDefault();
-                alert('Tanggal tidak tersedia. Silakan pilih tanggal lain.');
-                return; // Berhenti jika tanggal tidak tersedia
-            }
-            shouldPreventSubmit = true;
-            fetch('/schedule', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    user_id: '{{ $user->id }}',
-                    date: scheduleData.date,
-                    selectedTime: scheduleData.time,
-                })
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Network response was not ok.');
-                })
-                .then(data => {
-                    // Setel nilai dari input schedule_id dengan ID schedule yang baru dibuat
-                    const scheduleId = data.id;
-                    document.getElementById('schedule_id').value = scheduleId;
-                    // Lakukan apa pun yang perlu dilakukan setelah penyimpanan di database, misalnya, tampilkan pesan atau lakukan aksi lain
-                })
-                .catch(error => {
-                    console.error('There was an error!', error); // Handle kesalahan jika terjadi saat menyimpan jadwal
-                });
-        }
+                        @endforeach
+                    ];
+    // Check if the selected date is today or a future date
+    if (selectedDate < today) {
+        alert('Please select a date that is today or a future date.');
+        return false;
     }
-    document.addEventListener('DOMContentLoaded', function () {
-        const continueShoppingBtn = document.querySelector('.btn-warning'); // Ganti dengan selektor yang sesuai
-        continueShoppingBtn.addEventListener('click', function (event) {
-            event.preventDefault();
-            saveScheduleToDatabase(); // Panggil fungsi untuk menyimpan jadwal ke database
-            if (shouldPreventSubmit) {
-                document.getElementById('scheduleForm').submit();
+
+    // Check if the selected date corresponds to an available day
+    const selectedDay = selectedDate.toLocaleDateString('en-US', { weekday: 'short' });
+    if (!availableDays.includes(selectedDay)) {
+        alert('Please select a date that corresponds to an available day.');
+        return false;
+    }
+
+    return true;
+}
+function saveTempSchedule(event) {
+    event.preventDefault();
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('timeSlot').value;
+    const schedule = { date, time };
+
+    // Save schedule to local storage
+    localStorage.setItem('tempSchedule', JSON.stringify(schedule));
+
+    // Update the display on the page (optional)
+    updateScheduleDisplay();
+
+    // Close the modal
+    $('#scheduleModal').modal('hide');
+}
+
+// Function to update the schedule display on the page (optional)
+function updateScheduleDisplay() {
+    const schedule = JSON.parse(localStorage.getItem('tempSchedule'));
+
+    // Update the table cell with the selected schedule
+    const scheduleCell = document.querySelector('td[data-th="Schedule"]');
+    scheduleCell.textContent = `${schedule.date} - ${schedule.time}`;
+}
+
+// Event listener for the "Continue Shopping" button
+document.getElementById('scheduleForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const date = document.getElementById('date').value;
+    const schedule = JSON.parse(localStorage.getItem('tempSchedule'));
+
+    if (schedule && validateSelectedDate(date)) {
+        const scheduleInput = document.getElementById('temp_schedule');
+        scheduleInput.value = JSON.stringify(schedule);
+
+        // Include schedule_id in the form data
+        saveScheduleAndCart(schedule);
+    }
+});
+
+// Function to save schedule and add to cart using AJAX
+    function saveScheduleAndCart(schedule) {
+        $.ajax({
+            type: 'POST',
+            url: '/save-schedule-and-cart', // Adjust to the correct route in Laravel
+            data: {
+                _token: '{{ csrf_token() }}',
+                user_id: '{{ $user->id }}',
+                price: '{{ $user->price }}',
+                schedule: schedule
+            },
+            success: function (response) {
+                console.log(response);
+
+                // Check for 'ok' key in the response
+                if (response.ok) {
+                    // Display success message
+                    alert('Schedule and Cart saved successfully!');
+
+                    // Redirect to the destination page (optional)
+                    window.location.href = '/game';
+                } else {
+                    // Display error message
+                    alert(response.message || 'Failed to save schedule and add to cart. Please try again.');
+                }
+            },
+            error: function (error) {
+                console.error('Error:', error);
             }
-
-            // Lanjutkan dengan aksi untuk melanjutkan belanja, misalnya, pindah ke halaman berikutnya atau lakukan yang lain
-
         });
-    });
-    @if (session('error'))
-        alert('{{ session('error') }}');
-    @endif
+    }
+
+// Optional: Load and display the schedule if available in local storage
+document.addEventListener('DOMContentLoaded', function () {
+    updateScheduleDisplay();
+});
 </script>
 @endsection

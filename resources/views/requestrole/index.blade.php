@@ -50,7 +50,7 @@
                         <div class="text-white">
                             <label for="rolecategory">Role</label>
                         </div>
-                        <select class="form-select" id="role" name="role_id">
+                        <select class="form-select" id="role" name="role_id" onchange="updatePrice()">
                             @foreach ($roles as $role)
                                 <option
                                     value="{{ $role->id }}"{{ $permissions->isEmpty() ? '' : ($permissions[0]->role_id == $role->id ? ' selected' : '') }}>
@@ -63,10 +63,8 @@
                         <div class="text-white">
                             <label for="price">Price</label>
                         </div>
-                        <input style="border-radius: 5px"
-                            value="{{ $permissions->isEmpty() ? old('price', 100) : $permissions[0]->price }}"
-                            type="number" class="mb-2 form-control @error('price') is-invalid @enderror" id="price"
-                            placeholder="price" name="price">
+                        <input style="border-radius: 5px" value="{{ $permissions->isEmpty() ? old('price', 100) : $permissions[0]->price }}"
+                        type="number" class="mb-2 form-control @error('price') is-invalid @enderror" id="price" placeholder="price" name="price" readonly>
                         @error('price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -241,7 +239,53 @@
                 </form>
             </main>
         </div> --}}
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
         <script>
+            $(document).ready(function () {
+                // Panggil fungsi updatePrice saat halaman dimuat
+                updatePrice();
+
+                // Tambahkan event listener untuk perubahan pada dropdown role
+                $('#role').change(function () {
+                    // Panggil fungsi updatePrice setiap kali peran dipilih
+                    updatePrice();
+                });
+
+                // Tambahkan event listener saat halaman sepenuhnya dimuat
+                document.addEventListener('DOMContentLoaded', function () {
+                    updatePriceValidationMessage();
+                });
+            });
+
+    function updatePrice() {
+        const roleDropdown = $('#role');
+        const priceInput = $('#price');
+
+        // Mendapatkan nilai role_id yang dipilih
+        const selectedRoleId = roleDropdown.val();
+
+        // Set nilai harga berdasarkan role_id
+        if (selectedRoleId === '2') {
+            priceInput.val(100);
+            priceInput.prop('readonly', true); // Tetapkan sebagai readonly
+        } else if (selectedRoleId === '1') {
+            // Hanya mengubah nilai jika masih dalam rentang 300-500
+            const currentPrice = parseInt(priceInput.val());
+            if (isNaN(currentPrice) || currentPrice < 300 || currentPrice > 500) {
+                priceInput.val(''); // Kosongkan nilai jika di luar rentang
+                priceInput.prop('readonly', false); // Hapus atribut readonly
+            }
+            priceInput.attr('placeholder', 'Enter price between 300 and 500');
+        } else {
+            priceInput.val(''); // Kosongkan nilai untuk role lainnya
+            priceInput.prop('readonly', false); // Hapus atribut readonly
+        }
+
+        // Panggil fungsi untuk memperbarui pesan validasi harga
+    }
+
             function previewImage() {
                 const image = document.querySelector('#image');
                 const imgPreview = document.querySelector('.img-preview');

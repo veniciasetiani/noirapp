@@ -235,10 +235,7 @@
             var totalAmount = selectedPoints * 200;
 
             // Generate BCA virtual account details (replace with actual logic if needed)
-            var randomDigits = Math.floor(1000 + Math.random() * 9000);
-            var randomLastDigits = Math.floor(1000 + Math.random() * 9000);
-
-            var bcaAccountNumber = "3879-" + randomDigits + "-" + randomLastDigits;
+            var bcaAccountNumber = "1234-5678-9012";
             var bcaExpiration = "01/25";
 
             // Update modal content
@@ -286,30 +283,7 @@
 
         $('#topUpButton').click(function(e) {
         e.preventDefault();
-
-        var pointTopUp = $('select[name="point_top_up"]').val();
-        var paymentMethod = $('select[name="payment_method"]').val();
-
-        if (pointTopUp !== 'Silahkan Pilih Point' && paymentMethod !== 'Silahkan pilih Metode pembayaran') {
-            var formData = new FormData($('#topUpForm')[0]);
-
-            $.ajax({
-                url: "{{ route('top_up') }}",
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(data) {
-                    console.log(data);
-                    redirectToTopUp();
-                },
-                error: function(error) {
-                    console.error('Error:', error);
-                }
-            });
-        } else {
-            alert('Please select both Point and Payment Method.');
-        }
+        alert('Saldo Anda tidak cukup');
     });
     </script>
 

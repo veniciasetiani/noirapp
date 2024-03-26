@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use Illuminate\Http\Request;
 use App\Models\AvailableTime;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleController extends Controller
 {
@@ -57,8 +58,9 @@ class ScheduleController extends Controller
         $end_time = date('H:i', strtotime($start_time) + 7200); // Menambah 2 jam ke waktu mulai
         $existingSchedule = Schedule::where('user_id',$user_id)->where('date', $date)
         ->where('start_time', $start_time)
+
         ->exists();
-        $existingSchedule2 = Schedule::where('buyer_id', $buyer_id)->first();
+        $existingSchedule2 = Schedule::where('buyer_id', $buyer_id)->where('is_active', true)->first();
 
         if ($existingSchedule2) {
             return redirect()->back()->with('error', 'You already have a schedule.');
@@ -76,6 +78,56 @@ class ScheduleController extends Controller
 
         return redirect()->back()->with('schedule_id', $newSchedule->id)->with('success', 'Schedule saved successfully!');
     }
+
+
+    public function saveSchedules(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required',
+            'schedule' => 'required|array',
+            'schedule.date' => 'required|date',
+            'schedule.time' => 'required'
+        ]);
+
+        $user_id = $validated['user_id'];
+        $buyer_id = auth()->user()->id;
+        $date = $validated['schedule']['date'];
+        $time = $validated['schedule']['time'];
+
+        // Lakukan penyimpanan jadwal ke database sesuai kebutuhan Anda
+        // ...
+        $existingSchedule = Schedule::where('user_id',$user_id)->where('date', $date)
+        ->where('start_time', $time)
+        ->where('is_active', true)
+        ->exists();
+        $existingSchedule2 = Schedule::where('buyer_id', $buyer_id)->where('is_active', true)->first();
+
+        if ($existingSchedule2) {
+            return redirect()->back()->with('error', 'You already have a schedule.');
+        }
+        if ($existingSchedule) {
+            return redirect()->back()->with('error', 'The selected date and time are not available.');
+        }
+        try{
+            $schedule = new Schedule([
+                'user_id' => $user_id,
+                'buyer_id' => $buyer_id,
+                'date' => $date,
+                'start_time' => $time,
+                'end_time' => date('H:i', strtotime($time) + 7200),
+            ]);
+
+            $schedule->save();
+
+            return redirect()->back()->with('schedule_id', $schedule->id)->with('success', 'Schedule saved successfully!');
+        }catch (\Exception $e) {
+            Log::error('Error saving schedule: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to save schedule. Please try again.']);
+        }
+        // Contoh penyimpanan jadwal menggunakan model Schedule
+
+    }
+
 
     public function userSchedules()
     {

@@ -13,7 +13,8 @@ class OrderValidation extends Model
         'user_id',
         'buyer_id',
         'price',
-        'schedule_id'
+        'schedule_id',
+        'timer_expiry'
     ];
 
     public function buyer(){

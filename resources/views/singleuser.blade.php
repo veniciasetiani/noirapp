@@ -24,16 +24,16 @@
             z-index: 1;
         }
 
-        .carousel-control-prev {
-            left: 1em;
-            margin-left: 325px;
-        }
+        /* .carousel-control-prev {
+                        left: 1em;
+                        margin-left: 325px;
+                    }
 
-        .carousel-control-next {
-            right: 1em;
-            margin-right: 350px;
+                    .carousel-control-next {
+                        right: 1em;
+                        margin-right: 350px;
 
-        }
+                    } */
 
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
@@ -49,60 +49,49 @@
             height: 400px;
             object-fit: cover;
         }
+
         .filled-star {
-            font-size: 24px; /* Ukuran bintang yang diisi */
-            color: yellow; /* Warna bintang saat diisi */
+            font-size: 24px;
+            /* Ukuran bintang yang diisi */
+            color: yellow;
+            /* Warna bintang saat diisi */
         }
 
         .empty-star {
-            font-size: 24px; /* Ukuran bintang kosong */
-            color: gray; /* Warna bintang kosong */
+            font-size: 24px;
+            /* Ukuran bintang kosong */
+            color: gray;
+            /* Warna bintang kosong */
         }
     </style>
 
-    <div class="container">
-        <div class="row justify-content-center mb-5">
+    <div class="container-lg mt-3 d-flex flex-column justify-content-center align-items-center">
+        <div class="w-100">
+
+        <h1 class="h2-title-text mb-4">USER PROFILE</h1>
+        <hr>
+        </div>
+        <div class="row justify-content-center mt-2 mb-5 w-100">
+
             <div class="col-md-4 d-inline-block justify-content-right">
                 <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
-                        @if (
-                            !empty($user->updateSingleBlade->image_path) &&
-                                !empty($user->updateSingleBlade->video_path) &&
-                                $user->updateSingleBlade->is_approved === 1)
-                            <!-- Display content when both image_path and video_path are not empty and is_approved is 1 -->
-                            <div class="carousel-item active">
-                                <img src="{{ asset('storage/' . $user->updateSingleBlade->image_path) }}"
-                                    class="d-block w-100" alt="Profile Image">
-                            </div>
-                            <div class="carousel-item">
-                                <video class="d-block w-100" controls>
-                                    <source src="{{ asset('storage/' . $user->updateSingleBlade->video_path) }}"
-                                        type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                        @elseif (!$permissions->isEmpty())
+                        @if (!$permissions)
                             <!-- Display content based on permissions -->
-                            @foreach ($permissions as $permission)
-                                @if ($permission->statcode === 'APV')
                                     <div class="carousel-item active">
-                                        <img src="{{ asset('storage/' . $permission->image) }}" alt="Uploaded Image"
+                                        <img src="{{ asset('storage/' . $permissions->image) }}" alt="Uploaded Image"
                                             class="d-block w-100">
                                     </div>
-                                    @if (property_exists($permission, 'imageprofile'))
-                                        <div class="carousel-item">
-                                            <img src="{{ asset('storage/' . $permission->imageprofile) }}"
-                                                alt="Uploaded Image" class="d-block w-100">
-                                        </div>
-                                    @endif
+                                    <div class="carousel-item">
+                                        <img src="{{ asset('storage/' . $permissions->imageprofile) }}"
+                                            alt="Uploaded Image" class="d-block w-100">
+                                    </div>
                                     <div class="carousel-item">
                                         <video class="d-block w-100" controls>
-                                            <source src="{{ asset('storage/' . $permission->video) }}" type="video/mp4">
+                                            <source src="{{ asset('storage/' . $permissions->video) }}" type="video/mp4">
                                             Your browser does not support the video tag.
                                         </video>
                                     </div>
-                                @endif
-                            @endforeach
                         @else
                             <!-- Display default image when both permissions and updateSingleBlade data are empty -->
                             <div class="carousel-item active">
@@ -124,117 +113,142 @@
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <h2 class="mb-3 mt-2">{{ $user->username }}</h2>
-                <div class="col-md-4 d-inline">
-                    <a href="/addtocart/{{ $user->username }}" class="btn btn-lg">Order</a>
-                    <button type="submit" class="btn-chat" data-chat-with="{{ $user->id }}"
-                        onclick="window.location.href='/chatify/{{ $user->id }}'"><i class="bi bi-chat-heart"></i> Chat</button>
-                        <a href="/report/{{ $user->username }}" class="btn btn-lg">Report</a>
+            <div class="col-md-8">
+                <div class="d-flex align-items-start mb-3 card bg-dark py-2 mt-3 mt-md-0 px-4">
+                    <h2 class="m-0">{{ $user->username }}</h2>
+
+                    <div>
+    
+                        @php
+                            $roundedRating = floor($averageRating * 2) / 2; // Bulatkan ke setengah bintang terdekat ke bawah
+                            $fullStars = floor($roundedRating); // Bintang penuh
+                            $hasHalfStar = $roundedRating - $fullStars === 0.5; // Cek apakah terdapat setengah bintang
+                            $username = $user->username;
+                        @endphp
+        
+                        @for ($i = 0; $i < $fullStars; $i++)
+                            <span><i class="bi bi-star-fill filled-star"
+                                    style="color: yellow; font-size: 1.2rem;"></i></span>
+                        @endfor
+        
+                        @if ($hasHalfStar)
+                            <i class="bi bi-star-half filled-star" style="color: yellow; font-size: 1.2rem;"></i>
+                        @endif
+        
+                        @for ($i = 0; $i < 5 - ceil($roundedRating); $i++)
+                            <span><i class="bi bi-star empty-star" style=" font-size: 1.2rem;"></i></span>
+                        @endfor
+                    </div>
+                </div>
+                 
+                <div class="row">
+                    <div class="col-12 col-md-6 pe-md-1 mb-2 mb-md-0">
+                        <div class="card p-3 bg-transparent border-0 py-2 mb-2">
+                            <h4 class="user-desc-title mb-1">
+                                Skill</h4>
+                            <hr class="m-0 mb-2">
+
+                            <div class="row">
+                                <div class="col-md-5">
+                                    @php
+                                        $imageSrc = $user->category->image ? asset('storage/' . $user->category->image) : 'https://source.unsplash.com/40x50/?game';
+                                    @endphp
+                                    @if ($user->category->image)
+                                        <img style="border-radius: 10px" src="{{ $imageSrc }}" class="card-img-top"
+                                            alt="...">
+                                    @else
+                                        <img style="border-radius: 10px" src="https://source.unsplash.com/40x50/?game"
+                                            class="card-img-top" alt="...">
+                                    @endif
+                                </div>
+                                <div class="col-md-6 text-white mt-5">
+                                    {{ $user->category->name }}
+                                    <div class="price mt-1"><img src="/img/gatcha.png" style="height:1.25rem" alt="" class="me-2" /> {{ $user->price }} / match</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-3 bg-transparent border-0 py-2">
+
+                            <h4 class="user-desc-title mb-1">
+                                Bio</h4>
+                            <hr class="m-0 mb-2">
+                            <div class="informasi px-3 py-2">
+                                @if ($user->updateSingleBlade && $user->updateSingleBlade->approved)
+                                    <p>{{ $user->updateSingleBlade->updated_bio }}</p>
+                                @else
+                                    <p>{{ $user->body }}</p>
+                                @endif
+                            </div>
+
+
+                            @if (isset($image) && isset($video))
+                                <!-- Display image and video for role request -->
+                                <img src="{{ asset('storage/' . $image) }}" alt="Image">
+                                <video controls>
+                                    <source src="{{ asset('storage/' . $video) }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            @elseif(isset($bio) && isset($image) && isset($video))
+                                <!-- Display updated data for update request -->
+                                <p>Bio: {{ $bio }}</p>
+                                <img src="{{ asset('storage/' . $image) }}" alt="Image">
+                                <video controls>
+                                    <source src="{{ asset('storage/' . $video) }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 ps-md-1">
+                        <div class="card p-3 bg-transparent border-0 py-2 mb-2">
+                            <h4 class="user-desc-title mb-1">
+                                Available Times</h4>
+                            <hr class="m-0 mb-2">
+                            <div class="informasi px-3 py-2">
+                                <ul class="mb-0">
+                                    @foreach ($availableTimes as $availableTime)
+                                        @php
+                                            $startTime = strtotime($availableTime->start_time);
+                                            $endTime = strtotime($availableTime->end_time);
+                                            $day = $availableTime->day;
+                                        @endphp
+
+                                        <li>
+                                            {{ date('H:i', $startTime) }} - {{ date('H:i', $endTime) }}
+                                            ({{ date('l', strtotime($day)) }})
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card p-3 bg-transparent border-0 py-2 mb-4">
+                            <h4 class="user-desc-title mb-1">
+                                Actions</h4>
+                            <hr class="m-0 mb-2">
+                            <div class="row gx-2 align-items-center justify-content-center">
+                                <a href="/addtocart/{{ $user->username }}" class="btn col m-2">Order</a>
+                                <a href="/report/{{ $user->username }}" class="btn col m-2">Report</a>
+                                
+                                <p class="col-auto text-center align-center text-white mb-0">or</p>
+    
+                                <button type="submit" class="btn-chat p-2 py-1 col  m-2" data-chat-with="{{ $user->id }}"
+                                    onclick="window.location.href='/chatify/{{ $user->id }}'">
+                                    <i class="bi bi-chat-heart"></i> Chat
+                                </button>
+                            </div>
+      
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <p
-                    style="font-size: 2rem; color:orange; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
-                    Skill</p>
-                <hr>
-
-                <div class="row">
-                    <div class="col-md-5">
-                        @php
-                            $imageSrc = $user->category->image ? asset('storage/' . $user->category->image) : 'https://source.unsplash.com/40x50/?game';
-                        @endphp
-                        @if ($user->category->image)
-                            <img style="border-radius: 10px" src="{{ $imageSrc }}" class="card-img-top" alt="...">
-                        @else
-                            <img style="border-radius: 10px" src="https://source.unsplash.com/40x50/?game"
-                                class="card-img-top" alt="...">
-                        @endif
-                    </div>
-                    <div class="col-md-6 text-white mt-5">
-                        {{ $user->category->name }}
-                        <div class="price mt-1"> <img src="/img/gatcha.png" style="height:1.25rem" alt="" class="me-2" />
-                            {{ $user->price }} / match</div>
-                    </div>
-                </div>
-
-
-                <p class="mt-4"
-                    style="font-size: 2rem; color:orange; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
-                    Bio</p>
-                <hr>
-                <div class="informasi">
-                    @if ($user->updateSingleBlade && $user->updateSingleBlade->approved)
-                        <p>{{ $user->updateSingleBlade->updated_bio }}</p>
-                    @else
-                        <p>{{ $user->body }}</p>
-                    @endif
-                </div>
-                <p class="mt-4"
-                    style="font-size: 2rem; color:orange; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
-                    Available Times</p>
-                <hr>
-                <div class="informasi">
-                    <ul>
-                        @foreach ($availableTimes as $availableTime)
-                            @php
-                                $startTime = strtotime($availableTime->start_time);
-                                $endTime = strtotime($availableTime->end_time);
-                                $day = $availableTime->day;
-                            @endphp
-
-                            <li>
-                                {{ date('H:i', $startTime) }} - {{ date('H:i', $endTime) }}
-                                ({{ date('l', strtotime($day)) }})
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-
-
-                @if (isset($image) && isset($video))
-                    <!-- Display image and video for role request -->
-                    <img src="{{ asset('storage/' . $image) }}" alt="Image">
-                    <video controls>
-                        <source src="{{ asset('storage/' . $video) }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                @elseif(isset($bio) && isset($image) && isset($video))
-                    <!-- Display updated data for update request -->
-                    <p>Bio: {{ $bio }}</p>
-                    <img src="{{ asset('storage/' . $image) }}" alt="Image">
-                    <video controls>
-                        <source src="{{ asset('storage/' . $video) }}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                @endif
-
-                <p class="mt-4"
-                style="font-size: 2rem; color:orange; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
-                Rating</p>
-                <hr>
-                <div>
-
-                    @php
-                        $roundedRating = floor($averageRating * 2) / 2; // Bulatkan ke setengah bintang terdekat ke bawah
-                        $fullStars = floor($roundedRating); // Bintang penuh
-                        $hasHalfStar = $roundedRating - $fullStars === 0.5; // Cek apakah terdapat setengah bintang
-                        $username = $user->username;
-                    @endphp
-
-                    @for ($i = 0; $i < $fullStars; $i++)
-                        <a href="/rating-detail/{{ $username }}"><i class="bi bi-star-fill filled-star" style="color: yellow;"></i></a>
-                    @endfor
-
-                    @if ($hasHalfStar)
-                        <i class="bi bi-star-half filled-star" style="color: yellow;"></i>
-                    @endif
-
-                    @for ($i = 0; $i < 5 - ceil($roundedRating); $i++)
-                        <a href="/rating-detail/{{ $username }}"><i class="bi bi-star empty-star"></i></a>
-                    @endfor
-                </div>
+            <div class="mt-3">
+                <h2 class="user-desc-title mb-2">
+                    Rating</h2>
+                <hr class="m-0 mb-2">
+                @include('rating/detail')
             </div>
         </div>
     </div>

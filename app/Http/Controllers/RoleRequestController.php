@@ -84,13 +84,13 @@ class RoleRequestController extends Controller
         // Validate the request
         $validated = $request->validate([
             'role_id' => 'required',
-            'price' => 'required',
+            'price' => ($request->role_id == 1) ? 'required|numeric|min:300|max:500' : 'required|numeric',
             'imageprofile' => isset($request->imageprofile) ? 'required|image|file|max:1024' : 'nullable|image|file|max:1024',
             'image' => isset($request->image) ? 'required|image|file|max:1024' : 'nullable|image|file|max:1024',
             'video' => isset($request->video) ? 'required|mimes:mp4,avi,wmv|max:10240' : 'nullable|mimes:mp4,avi,wmv|max:10240',
             'category_id' => 'required',
             'norekening' => 'required|max:16|min:16',
-            'body' => 'required|max:30',
+            'body' => 'required|max:255',
         ]);
 
         if ($request->hasFile('imageprofile')) {

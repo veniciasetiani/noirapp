@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChMessage;
 use Illuminate\Http\Request;
+use App\Events\UnreadMessagesUpdated;
 
 class ChatifyController extends Controller
 {
@@ -19,4 +21,13 @@ class ChatifyController extends Controller
     }
 
 
+    public function updateUnreadMessagesCount()
+    {
+        // Update the unread count
+        $unreadCount = ChMessage::where('to_id', auth()->user()->id)->where('seen', 0)->count();
+
+
+
+        return response()->json(['unreadCount' => $unreadCount]);
+    }
 }

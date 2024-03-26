@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',50);
             $table->string('username',50)->unique();
-            $table->string('excerpt',50)->nullable();
+            $table->string('excerpt',20)->nullable();
             $table->string('body',255)->nullable();
             $table->decimal('price')->nullable();
             $table->string('email',50)->unique();
@@ -32,6 +32,7 @@ return new class extends Migration
             $table->boolean('ban_status')->nullable()->default(false);
             $table->integer('report_times')->nullable();
             $table->integer('unban_times')->nullable();
+            $table->decimal('rating_avg', 4, 2)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

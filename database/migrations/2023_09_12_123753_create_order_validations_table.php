@@ -20,9 +20,10 @@ return new class extends Migration
             $table->unsignedBigInteger('seller_id');
             $table->foreign('seller_id')->references('id')->on('users');
             $table->unsignedBigInteger('schedule_id');
-            $table->foreign('schedule_id')->references('id')->on('schedules')->onDelete('cascade'); // Assuming you have a 'schedules' table
+            $table->foreign('schedule_id')->references('id')->on('schedules');
             $table->decimal('price', 8, 2);
             $table->enum('status', ['REQ', 'APV', 'RJC']);
+            $table->dateTime('timer_expiry')->nullable();
             $table->timestamps();
         });
     }

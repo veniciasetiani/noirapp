@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class WithdrawalController extends Controller
 {
@@ -47,12 +48,18 @@ class WithdrawalController extends Controller
         $data =  User::find(auth()->user()->id);
         $validated["points"] = $data->points - $request->Withdrawal;
 
+        $user = auth()->user();
+        $passwordMatches = Hash::check($request->input('password'), $user->password);
+        if (!$passwordMatches) {
+            return redirect('/withdrawal')->with('error', 'Incorrect password. Withdrawal failed.');
+        }
+
         User::where('id',auth()->user()->id)
         ->update($validated);
 
         $request -> session() ->flash('success','Withdrawal Successful , Please Check Your Bank!');
         return redirect('/withdrawal');
-       
+
 
     }
 

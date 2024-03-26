@@ -49,7 +49,7 @@ class TopUpController extends Controller
         $data = User::where('id',auth()->user()->id)->first();
 
         if($data->idcardstatcode !== 'RJC'){
-            return redirect('/top_up')->with('danger','You Have Pending Id Card Number Request');    
+            return redirect('/top_up')->with('danger','You Have Pending Id Card Number Request');
         }
 
         $validated = $request->validate([
@@ -60,8 +60,17 @@ class TopUpController extends Controller
         User::where('id',$data->id)
         ->update($validated);
 
-        return redirect('/top_up')->with('success','Your Id Card Number Request Has Been Submitted');    
+        return redirect('/top_up')->with('success','Your Id Card Number Request Has Been Submitted');
 
+    }
+
+    public function indexFail()
+    {
+        // $points = $this->getUserPoints();
+        return view('topupfail.top_up', [
+            "title" => "order",
+            'active' => 'order',
+        ]);
     }
 
     // public function getUserPoints()

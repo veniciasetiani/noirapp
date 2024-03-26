@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('header',20);
             $table->string('detail',100);
             $table->string('image');
+            $table->boolean('is_refund');
+            $table->boolean('is_reject');
             $table->timestamps();
         });
     }
