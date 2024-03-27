@@ -24,7 +24,7 @@ class ReportController extends Controller
     {
         $validated = $request->validate([
             'header' =>'required',
-            'detail' => 'required',
+            'detail' => 'required|min:20',
             'image' => 'required|image|file|max:1024',
         ]);
 
@@ -57,7 +57,7 @@ class ReportController extends Controller
         $user->ban_status = true;
         $user->save();
 
-        return redirect('/dashboard')->with('success', 'User banned successfully');
+        return redirect('/report-users')->with('success', 'User banned successfully');
     }
 
     public function unban($id)
@@ -70,6 +70,6 @@ class ReportController extends Controller
         Report::where('user_id', $id)->delete();
 
 
-        return redirect('/dashboard')->with('success', 'User unbanned successfully');
+        return redirect('/report-users')->with('success', 'User unbanned successfully');
     }
 }

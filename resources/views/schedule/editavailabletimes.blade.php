@@ -5,11 +5,11 @@
 
         <div class="row justify-content-center">
             <div class="col-md-6 mt-5">
-                @if (session()->has('success'))
-                <div class="alert alert-success text-left" role="alert">
-                    {{ session('success') }}
-                </div>
-            @endif
+                 @if (session()->has('success'))
+        <div class="alert alert-success text-left" role="alert">
+            {{ session('success') }}
+        </div>
+        @endif
                 <div class="card">
                     <div class="card-body">
                         <h2 class="card-title text-black">Update Available Times</h2>
@@ -45,10 +45,11 @@
                                                 @for ($hour = 0; $hour <= 23; $hour++)
                                                     @for ($minute = 0; $minute <= 59; $minute += 15)
                                                         @php
-                                                            $timeValue = sprintf('%02d:%02d:00 WIB', $hour, $minute);
+                                                            $timeValue = sprintf('%02d:%02d:00', $hour, $minute);
+                                                            $timeWithWIB = $timeValue . ' WIB';
                                                         @endphp
                                                         <option value="{{ $timeValue }}" {{ in_array($timeValue, $userAvailableTimes->pluck('start_time')->toArray()) ? 'selected' : '' }}>
-                                                            {{ $timeValue }}
+                                                            {{ $timeWithWIB }}
                                                         </option>
                                                     @endfor
                                                 @endfor
@@ -57,10 +58,11 @@
                                                 @for ($hour = 0; $hour <= 23; $hour++)
                                                     @for ($minute = 0; $minute <= 59; $minute += 15)
                                                         @php
-                                                            $timeValue = sprintf('%02d:%02d:00 WIB', $hour, $minute);
+                                                            $timeValue = sprintf('%02d:%02d:00', $hour, $minute);
+                                                            $timeWithWIB = $timeValue . ' WIB';
                                                         @endphp
                                                         <option value="{{ $timeValue }}" {{ in_array($timeValue, $userAvailableTimes->pluck('end_time')->toArray()) ? 'selected' : '' }}>
-                                                            {{ $timeValue }}
+                                                            {{ $timeWithWIB }}
                                                         </option>
                                                     @endfor
                                                 @endfor

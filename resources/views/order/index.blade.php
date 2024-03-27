@@ -75,15 +75,20 @@
                         <label for="selectedTime">Time</label>
                         <select id="timeSlot" class="form-control" name="selectedTime">
                             @foreach($availableTimes as $availableTime)
-                            @php
-                            $startTime = strtotime($availableTime->start_time);
-                            $endTime = strtotime($availableTime->end_time);
-                            @endphp
-                            @for ($i = $startTime; $i < $endTime; $i +=7200) @php $timeStart=date("H:i", $i);
-                                $timeEnd=date("H:i", $i + 7200); @endphp <option value="{{ $timeStart }}">{{ $timeStart
-                                }} - {{ $timeEnd }} WIB</option>
+                                @php
+                                    $startTime = strtotime($availableTime->start_time);
+                                    $endTime = strtotime($availableTime->end_time);
+                                    $roleBasedInterval = ($user->role->name == 'Player') ? 3600 : 7200; // Adjust interval based on user role
+                                @endphp
+                                @for ($i = $startTime; $i < $endTime; $i += $roleBasedInterval)
+                                    @php
+                                        $timeStart = date("H:i", $i);
+                                        $timeEnd = date("H:i", $i + $roleBasedInterval);
+                                        $formattedTime = $timeStart . ' - ' . $timeEnd . ' WIB';
+                                    @endphp
+                                    <option value="{{ $timeStart }}">{{ $formattedTime }}</option>
                                 @endfor
-                                @endforeach
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -125,6 +130,11 @@ function saveTempSchedule(event) {
     event.preventDefault();
     const date = document.getElementById('date').value;
     const time = document.getElementById('timeSlot').value;
+    if (!date) {
+        alert('Please select a date.');
+        return; // Hentikan eksekusi fungsi jika tanggal belum dipilih
+    }
+
     const schedule = { date, time };
 
     // Save schedule to local storage
