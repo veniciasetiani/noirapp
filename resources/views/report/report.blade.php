@@ -2,16 +2,17 @@
 
 @section('container')
     <div class="container">
-        @if (session()->has('success'))
-        <div class="alert alert-success col-lg-5" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
+
         <div class="row justify-content-center">
             <div class="col-md-6">
+                  @if (session()->has('success'))
+                 <div class="alert alert-success" role="alert">
+                  {{ session('success') }}
+                </div>
+                 @endif
                 <div class="card">
                     <div class="card-body">
-                        <h2 class="card-title">Report</h2>
+                        <h2 class="card-title text-center text-black">Report</h2>
 
                         <form action="/createreport" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -19,26 +20,24 @@
                             <input type="hidden" name="user_id" value="{{ $user->id }}">
                             <div class="form-floating mt-2">
                                 <div class="text-black">
-                                    <label for="header">Title</label>
+                                    <label for="header">Reason</label>
                                 </div>
-                                <input style="border-radius: 5px" value="{{ old('header') }}" type="text"
-                                    class="mb-1 form-control @error('header') is-invalid @enderror" id="header" placeholder="header"
-                                    name="header">
-                                    <select class="form-control" id="header" name="header" required focus>
-                                        <option value="Scamming">Scamming</option>                         
-                                        <option value="Sexual harrassment">Sexual harrassment</option>        
-                                        <option value="Spam or misleading">Spam or misleading</option>  
-                                        <option value="Promotes terrorism">Promotes terrorism</option>   
-                                        <option value="Hateful speech or bullying">Hateful speech or bullying</option>                         
-                                        <option value="" disabled selected>Select reason</option>        
+                                 <select class="form-control" id="header" name="header" required focus>
+                                        <option value="Scamming">Scamming</option>
+                                        <option value="Sexual harrassment">Sexual harrassment</option>
+                                        <option value="Spam or misleading">Spam or misleading</option>
+                                        <option value="Promotes terrorism">Promotes terrorism</option>
+                                        <option value="Hateful speech or bullying">Hateful speech or bullying</option>
+                                        <option value="" disabled selected>Select reason</option>
                                     </select>
+
                                 @error('header')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-floating mt-2">
                                 <div class="text-black">
-                                    <label for="header">Report Detail</label>
+                                    <label for="header">Report Detail (tell us what happened)</label>
                                 </div>
                                 <input style="border-radius: 5px" value="{{ old('detail') }}" type="text"
                                     class="mb-1 form-control @error('detail') is-invalid @enderror" id="detail" placeholder="detail"
