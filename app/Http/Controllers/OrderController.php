@@ -297,6 +297,7 @@ public function saveScheduleAndCart(Request $request)
         return view('order.orderpage', compact('cartItems'));
     }
 
+    //yang kepake
     public function placeOrder(Request $request)
     {
         // dd($request->all());
