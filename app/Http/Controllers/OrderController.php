@@ -109,19 +109,28 @@ public function saveScheduleAndCart(Request $request)
         'schedule.time' => 'required'
     ]);
 
+    $user = User::findOrFail($validated['user_id']);
+    $userRole = $user->role->name;
+
     $user_id = $validated['user_id'];
     $buyer_id = auth()->user()->id;
     $date = $validated['schedule']['date'];
     $time = $validated['schedule']['time'];
-    $existingSchedule = Schedule::where('user_id',$user_id)->where('date', $date)
-    ->where('start_time', $time)
-    ->where('is_active', true)
-    ->exists();
+    $existingSchedule = Schedule::where('user_id', $user_id)
+        ->where('date', $date)
+        ->where('start_time', $time)
+        ->where('is_active', true)
+        ->exists();
 
-    $existingSchedule2 = Schedule::where('buyer_id',$buyer_id)->where('date', $date)
-    ->where('start_time', $time)
-    ->where('is_active', true)
-    ->exists();
+    $existingSchedule2 = Schedule::where('buyer_id', $buyer_id)
+        ->where('date', $date)
+        ->where('start_time', $time)
+        ->where('is_active', true)
+        ->exists();
+
+    // Check if the user role is 'Player'
+    $saveInterval = ($userRole == 'Player') ? 3600 : 7200;
+
     if ($existingSchedule2) {
         return redirect()->back()->with('error', 'You already have a schedule with this date and time.');
     }
@@ -135,7 +144,7 @@ public function saveScheduleAndCart(Request $request)
             'buyer_id' => $buyer_id,
             'date' => $date,
             'start_time' => $time,
-            'end_time' => date('H:i', strtotime($time) + 7200),
+            'end_time' => date('H:i', strtotime($time) + $saveInterval),
         ]);
 
         $schedule->save();
@@ -288,6 +297,7 @@ public function saveScheduleAndCart(Request $request)
         return view('order.orderpage', compact('cartItems'));
     }
 
+    //yang kepake
     public function placeOrder(Request $request)
     {
         // dd($request->all());

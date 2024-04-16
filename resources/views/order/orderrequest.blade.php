@@ -4,6 +4,11 @@
     <div class="container mt-4">
         <h1 class="h2-title-text mb-4">ORDER REQUEST</h1>
         <hr>
+        @if(session()->has('success'))
+            <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+            </div>
+        @endif
 
         @if ($orderValidations->isEmpty())
             <p class="text-center text-danger">No order requests available.</p>

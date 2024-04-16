@@ -45,6 +45,9 @@ class WithdrawalController extends Controller
         if($request->Withdrawal > auth()->user()->points){
             return redirect('/withdrawal')->with('error', 'Withdrawal Exceed The Maximum Balance!');
         }
+        if($request->Withdrawal == 0){
+            return redirect('/withdrawal')->with('error', 'Withdrawal Cannot Be 0!');
+        }
         $data =  User::find(auth()->user()->id);
         $validated["points"] = $data->points - $request->Withdrawal;
 

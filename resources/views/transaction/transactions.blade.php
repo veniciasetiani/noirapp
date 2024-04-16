@@ -6,9 +6,9 @@
     <hr>
 
     @if(session()->has('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+    <div class="alert alert-success" role="alert">
+        {{ session('success') }}
+    </div>
     @endif
     @if ($transactions->isEmpty())
             <p class="text-center text-danger">No transaction available.</p>
